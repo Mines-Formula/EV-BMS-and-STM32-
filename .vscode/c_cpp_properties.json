@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "STM32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/build/Debug/**"
+            ],
+            "defines": [
+                "STM32F103xB"
+            ],
+            "compileCommands": "${workspaceFolder}/build/Debug/compile_commands.json",
+            "intelliSenseMode": "windows-gcc-arm"
+        }
+    ],
+    "version": 4
+}
