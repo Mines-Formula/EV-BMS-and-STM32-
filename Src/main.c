@@ -23,10 +23,8 @@ int main(void){
     /* Infinite loop */
     while (1)
     {
-        // Turn LED ON
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15, GPIO_PIN_RESET);
-        HAL_Delay(500); 
-        
+        // Toggle led
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
     }
 }
 
