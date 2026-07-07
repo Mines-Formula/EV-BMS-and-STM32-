@@ -1,0 +1,39 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "STM32 Cortex Flash",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "stlink",
+            "executable": "${workspaceRoot}/build/Debug/EMF.elf",
+            "runToEntryPoint": "main",
+            "cwd": "${workspaceRoot}",
+            "showDevDebugOutput": "raw"
+        }
+    ]
+}
+
+
+/*{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "stlinkgdbtarget",
+            "request": "launch",
+            "name": "STM32Cube: Launch ST-Link GDB Server",
+            "origin": "snippet",
+            "cwd": "${workspaceFolder}",
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "runEntry": "main",
+            "serverPort": "50000",
+            "serverCubeProgPath": "C:\\ST\\STM32CubeCLT_1.20.0\\STM32CubeProgrammer\\bin",
+            "imagesAndSymbols": [
+                {
+                    "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
+                }
+            ]
+        }
+    ]
+}
+*/
