@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * @file      main.c
- * @brief     Minimal LED Blink Test - STM32F103 + D3 LED (PC15)
+ * @brief     Minimal LED Blink Test + PA8 Chip Select Config
  * @hardware  STM32F103xx (with 16MHz External Crystal)
  ******************************************************************************
  */
@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_gpio.h"
+#include "stm32f1xx_hal_rcc.h"
 
 // Function Prototypes
 void SystemClock_Config(void);
@@ -23,8 +24,11 @@ int main(void){
     /* Infinite loop */
     while (1)
     {
-        // Toggle led
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_5);
+        // Toggle LED (PC15)
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
+        
+        // Delay 500ms so you can actually see the flash
+        HAL_Delay(500); 
     }
 }
 
@@ -55,20 +59,31 @@ void SystemClock_Config(void)
     }
 }
 
-// Configures PC15 for the D3 LED
+// Unified GPIO Initialization for Peripheral & Status Pins
 void GPIO_Init(void){
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    // Enable clock for GPIO Port C
+    /* --- 1. Enable Clocks for both Port A and Port C --- */
+    __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOC_CLK_ENABLE();
 
-    // Configure PC15 for the D3 LED
+    /* --- 2. Configure PC15 for the D3 LED --- */
+    // Set default state to High (LED Off initially because it's active-low)
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+
     GPIO_InitStruct.Pin = GPIO_PIN_15;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    // Set default state to High (LED Off initially)
-    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
+    /* --- 3. Configure PA8 as Chip Select Pin --- */
+    // Set default state to High (External SPI Device Deselected initially)
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_8;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
