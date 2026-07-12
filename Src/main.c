@@ -26,9 +26,7 @@ int main(void){
     {
         // Toggle LED (PC15)
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
-        
-        // Delay 500ms so you can actually see the flash
-        HAL_Delay(500); 
+        HAL_Delay(500);
     }
 }
 
