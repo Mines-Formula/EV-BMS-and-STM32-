@@ -19,7 +19,7 @@ void GPIO_Init(void);
 int main(void){
     HAL_Init();
     SystemClock_Config();
-    HAL_ResumeTick();
+    //HAL_ResumeTick();
     GPIO_Init();          
 
     for(int i = 0; i < 10;i++)
@@ -86,6 +86,7 @@ void GPIO_Init(void){
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
 
+//configures interrupt every 1ms 
 void SysTick_Handler(void)
 {
     HAL_IncTick();
