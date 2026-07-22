@@ -19,14 +19,14 @@ void GPIO_Init(void);
 int main(void){
     HAL_Init();
     SystemClock_Config();
+    HAL_ResumeTick();
     GPIO_Init();          
 
-    /* Infinite loop */
-    while (1)
+    for(int i = 0; i < 10;i++)
     {
         // Toggle LED (PC15)
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
-        HAL_Delay(500);
+        for (volatile uint32_t i = 0; i < 500000; i++);
     }
 }
 
@@ -61,12 +61,17 @@ void SystemClock_Config(void)
 void GPIO_Init(void){
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-    /* --- 1. Enable Clocks for both Port A and Port C --- */
+    /* --- 1. Enable Clocks --- */
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_PWR_CLK_ENABLE(); // Required for Backup Domain access
+    __HAL_RCC_BKP_CLK_ENABLE(); // Required for Backup Domain access
 
-    /* --- 2. Configure PC15 for the D3 LED --- */
-    // Set default state to High (LED Off initially because it's active-low)
+    /* --- 2. Unlock PC14 & PC15 for normal GPIO operation --- */
+    HAL_PWR_EnableBkUpAccess();         // Unlock write protection
+    __HAL_RCC_LSE_CONFIG(RCC_LSE_OFF);  // Force LSE oscillator OFF
+
+    /* --- 3. Configure PC15 --- */
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_15, GPIO_PIN_SET);
 
     GPIO_InitStruct.Pin = GPIO_PIN_15;
@@ -75,13 +80,13 @@ void GPIO_Init(void){
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    /* --- 3. Configure PA8 as Chip Select Pin --- */
-    // Set default state to High (External SPI Device Deselected initially)
+    /* --- 4. Configure PA8 --- */
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-
     GPIO_InitStruct.Pin = GPIO_PIN_8;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
+
+void SysTick_Handler(void)
+{
+    HAL_IncTick();
 }
